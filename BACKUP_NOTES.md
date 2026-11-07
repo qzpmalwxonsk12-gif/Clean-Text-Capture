@@ -1,4 +1,8 @@
-# Source backup
+# Clean-Text-Capture
+
+Chrome extension for selecting clean webpage text, collecting content, and exporting documents.
+
+
 
 Private source snapshot prepared on 2026-11-07. Original local files were not changed.
 
