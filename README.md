@@ -1,5 +1,15 @@
 # Select Clean Body Text — 2.2.0
 
+## Repository guide
+
+**Select Clean Body Text** is the Chrome/Chromium Manifest V3 extension in this repository. It helps select readable webpage content, collect pages in the background and create clipboard/export output. The separately maintained CopyAPP desktop application is an optional companion, not an executable bundled with this extension.
+
+The main entry points are `manifest.json`, `background.js`, `content.js`, `collector.js`, `popup.html`, `options.html` and the `*-core.js` modules. PDF/export support and bundled font/vendor assets remain alongside them. [THIRD_PARTY.md](THIRD_PARTY.md) records third-party components.
+
+Start with the install/update procedure below. Review collection timing, target-page behaviour and browser permissions before a long run; a page with dynamic or restricted content can require different handling from a simple article. Collection and export results should be checked against the source page rather than assumed complete from a successful button click.
+
+For development, use the scripts declared in [package.json](package.json), with Node.js/npm installed. The repository is extension source; desktop companion binaries, browser profiles, personal collection history and generated exports are separate local artifacts.
+
 A local Chrome Manifest V3 extension for clean text selection and background WTR Lab chapter collection.
 
 ## Install or update
@@ -66,3 +76,8 @@ Right-click a paragraph → **Select clean text from this body** → Ctrl+C. Esc
 Run `npm.cmd test` for syntax/manifest validation, state-machine, settings, timing, clipboard and PDF/TXT-export tests, and real headless-Chrome DOM fixtures. Browser fixtures verify the v1-to-v2 archive upgrade, sequential standard/fast collection, security interruptions, ordered backups and actual PDF generation through simulated Chrome messaging/tab/clipboard/download APIs. The PDF test creates a scratch sample under `tmp/pdfs/` for text extraction and rendered-page checks. These tests do not replace live testing of the installed extension's Chrome APIs, clipboard delivery to CopyAPP, WTR's behaviour or the user's TTS software. See THIRD_PARTY.md for local dependencies and font licenses.
 
 All text cleaning, job state, clipboard operations and backups stay local. Only normal chapter navigation contacts WTR Lab.
+
+
+## Source snapshot and validation
+
+See [BACKUP_NOTES.md](BACKUP_NOTES.md) for the omitted build outputs, local settings, credentials and runtime data. Build generated binaries locally using the instructions above; a source checkout is not an installed application. Earlier validation figures in this guide describe their original development runs. This documentation update checks source references and instructions; it does not claim a fresh application, device or gameplay test.
