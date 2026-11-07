@@ -25,3 +25,7 @@ This is a current working-file snapshot, not a copy of the original Git history.
 - `Select-Clean-Body-Text-v2.0.0.zip`: build, runtime, credentials, archive, or model artifact
 - `Select-Clean-Body-Text-v2.1.0.zip`: build, runtime, credentials, archive, or model artifact
 - `Select-Clean-Body-Text-v2.2.0.zip`: build, runtime, credentials, archive, or model artifact
+
+
+## Final source/security review (2026-11-07)
+
