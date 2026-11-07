@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chapter copy settings</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body {
+        margin: 0;
+        padding: 32px;
+        font: 15px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: Canvas;
+        color: CanvasText;
+      }
+      main { max-width: 560px; }
+      h1 { margin: 0 0 10px; font-size: 24px; }
+      p { margin: 0 0 22px; color: GrayText; }
+      label { display: block; margin-bottom: 8px; font-weight: 600; }
+      input {
+        width: 110px;
+        padding: 8px 10px;
+        border: 1px solid ButtonBorder;
+        border-radius: 7px;
+        font: inherit;
+      }
+      input[type="checkbox"] { width:auto; margin-right:8px; }
+      .help { font-size:13px; margin:8px 0 22px; }
+      .presets { margin-bottom:22px; }
+      button {
+        margin-left: 8px;
+        padding: 8px 14px;
+        border: 1px solid ButtonBorder;
+        border-radius: 7px;
+        font: inherit;
+        cursor: pointer;
+      }
+      #status { min-height: 24px; margin-top: 14px; color: #188038; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Chapter copy settings</h1>
+      <p>All timings are in seconds. Save applies changes to the running collection; no restart is needed.</p>
+      <div class="presets">
+        <button id="fast-preset" type="button">Apply Fast preset</button>
+        <button id="standard-preset" type="button">Apply Standard preset</button>
+      </div>
+      <label><input id="fast-mode" type="checkbox">Fast navigation</label>
+      <p class="help">Checks loading more frequently and opens the verified next chapter directly, without waiting for WTR's scroll-based Next button. It does not switch your active tab. Fast preset: 0.5s settling, 0s after-copy, 2s fallback. Presets save immediately and keep your security retry interval.</p>
+      <label for="text-settle-seconds">Text settling time (seconds)</label>
+      <input id="text-settle-seconds" type="number" min="0.1" max="60" step="0.1" value="1.5" aria-describedby="settle-help">
+      <p class="help" id="settle-help">0.1–60. Requires unchanged text across this interval. Lower values are faster but can miss late-arriving text; loading, chapter-identity and security checks remain enabled.</p>
+      <label for="chapter-delay-seconds">Delay after copying, before Next (seconds)</label>
+      <input id="chapter-delay-seconds" type="number" min="0" max="60" step="0.1" value="3" aria-describedby="delay-help">
+      <p class="help" id="delay-help">0–60. Extra pacing for clipboard-watcher apps and the website, not a requirement of copying. Zero removes the extra wait. Very fast copies may be missed by CopyAPP; the extension's PDF backup is independent.</p>
+      <label for="next-fallback-seconds">Stalled Next-button fallback delay (seconds)</label>
+      <input id="next-fallback-seconds" type="number" min="0" max="60" step="0.1" value="15" aria-describedby="fallback-help">
+      <p class="help" id="fallback-help">0–60. After a Next-button click fails to advance, wait this long before opening its verified chapter URL once. Fast navigation normally opens that URL immediately, so this timer only applies to button navigation. Never runs during a security check.</p>
+      <label for="security-retry-seconds">Security-check retry interval (seconds)</label>
+      <input id="security-retry-seconds" type="number" min="1" max="60" step="0.1" value="3">
+      <p class="help">1–60. Nothing is copied or advanced during a security check. This timer is separate from normal chapter loading checks.</p>
+      <button id="save" type="button">Save</button>
+      <div id="status" role="status" aria-live="polite"></div>
+      <p>Background tabs may run more slowly because Chrome can delay timers. Security checks are never clicked automatically.</p>
+    </main>
+    <script src="settings-core.js"></script><script src="options.js"></script>
+  </body>
+</html>

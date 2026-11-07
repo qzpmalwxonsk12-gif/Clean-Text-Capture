@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Clipboard writer</title>
+  </head>
+  <body>
+    <textarea
+      id="clipboard-buffer"
+      aria-hidden="true"
+      tabindex="-1"
+      style="position: fixed; left: -10000px; top: -10000px; width: 1px; height: 1px; opacity: 0;"
+    ></textarea>
+    <script src="archive.js"></script>
+    <script src="export-core.js"></script>
+    <script src="vendor/pdf-lib.min.js"></script>
+    <script src="vendor/fontkit.umd.min.js"></script>
+    <script src="pdf-export.js"></script>
+    <script src="timing-core.js"></script>
+    <script src="offscreen.js"></script>
+  </body>
+</html>

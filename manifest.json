@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "Select Clean Body Text",
+  "version": "2.2.0",
+  "description": "Select clean body text and automatically copy WTR Lab chapters as you read.",
+  "permissions": [
+    "alarms",
+    "clipboardWrite",
+    "contextMenus",
+    "downloads",
+    "offscreen",
+    "storage"
+  ],
+  "action": {
+    "default_title": "Chapter collection",
+    "default_popup": "popup.html"
+  },
+  "host_permissions": ["*://wtr-lab.com/*", "*://*.wtr-lab.com/*"],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "selector-core.js",
+        "capture-core.js",
+        "reader-core.js",
+        "settings-core.js",
+        "content.js",
+        "collector.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true,
+      "match_origin_as_fallback": true
+    }
+  ]
+}

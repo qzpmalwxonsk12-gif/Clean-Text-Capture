@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Clean body selector browser fixture</title>
+    <style>
+      .visually-hidden-by-css { display: none; }
+      #auto-next-test { position: fixed; left: 8px; top: 8px; width: 140px; height: 42px; z-index: 999; }
+    </style>
+  </head>
+  <body>
+    <button id="auto-next-test" type="button">Next test target</button>
+    <header class="site-header">
+      <nav>Home Products Account Pricing</nav>
+    </header>
+    <main>
+      <article class="story-shell">
+        <h1>Outside title that is not part of the targeted body</h1>
+        <div id="target-body" class="article-body content-area" itemprop="articleBody">
+          <p>
+            The first meaningful paragraph explains how a right-click can identify
+            exactly which reading body the visitor wants to select.
+          </p>
+          <div class="advertisement ad-slot" data-ad-slot="middle-rectangle">
+            BUY THE LOUD PRODUCT. Advertisement tracking text.
+          </div>
+          <p id="clicked-paragraph">
+            The second paragraph includes <strong>important inline wording</strong>
+            and keeps the word advertisement when it is genuinely part of the prose.
+          </p>
+          <aside>Unrelated sidebar quote and promotion.</aside>
+          <section class="related-content">
+            <h2>Related stories</h2>
+            <a href="#noise">Ten unrelated links</a>
+          </section>
+          <form><label>Email <input value="reader@example.com"></label></form>
+          <div class="visually-hidden-by-css">Invisible tracking copy.</div>
+          <p>
+            The final paragraph should remain selectable while navigation, forms,
+            sidebars, hidden material, and sponsored blocks stay out.
+          </p>
+        </div>
+        <footer>Article tools and legal links.</footer>
+      </article>
+      <div id="tracker-1" class="chapter-tracker active">
+        <div id="chapter-1" class="chapter-container">
+          <div id="wtr-chapter" class="chapter-body menu-target font-nunito">
+            <div class="wtr-line pr-line-array">
+              <button>Tianji Mountain Range</button> was shrouded in a hazy mist.
+            </div>
+            <div class="wtr-line pr-line-array">
+              The laws of <button>Hell</button> surrounded the ancient mountain while the
+              principal characters prepared carefully for the long journey ahead.
+            </div>
+            <div class="advertisement ad-slot">WTR LAB INLINE ADVERTISEMENT</div>
+            <div class="wtr-line pr-line-array" id="wtr-clicked-line">
+              The final WTR chapter line remains part of the selected prose and gives
+              the automatic collector enough meaningful text to validate the chapter.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="tracker-2" class="chapter-tracker">
+        <div id="chapter-2" class="chapter-container">
+          <div id="wtr-chapter-2" class="chapter-body menu-target font-nunito">
+            <div class="wtr-line pr-line-array">
+              Chapter two becomes active without changing the browser URL, matching
+              WTR Lab's multi-chapter reader behavior during a normal Next transition.
+            </div>
+            <div class="advertisement ad-slot">SECOND CHAPTER INLINE ADVERTISEMENT</div>
+            <div class="wtr-line pr-line-array">
+              The collector must detect the active tracker, generate a chapter-two key,
+              and copy this new prose even while the address still ends in chapter one.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="tracker-3" class="chapter-tracker">
+        <div id="chapter-92" class="chapter-container">
+          <div id="wtr-chapter-92" class="chapter-body menu-target font-nunito">
+            <h2>Security Check Required</h2>
+            <p>Please complete the security check</p>
+            <p>
+              We've detected unusual reading activity from your IP address. Please
+              complete the challenge below to continue reading.
+            </p>
+            <p>Having trouble with the challenge?</p>
+            <button>Open Challenge in New Page</button>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="../selector-core.js"></script>
+    <script src="../capture-core.js"></script>
+    <script src="../reader-core.js"></script>
+    <script src="../content.js"></script>
+    <script>
+      (function () {
+        const failures = [];
+        const check = (condition, message) => {
+          if (!condition) failures.push(message);
+        };
+
+        const target = document.getElementById("clicked-paragraph");
+        const root = CleanBodySelector.findContentRoot(target);
+        check(root && root.id === "target-body", "picked the wrong content root");
+
+        const text = CleanBodySelector.extractCleanText(root);
+        check(text.includes("first meaningful paragraph"), "lost the first paragraph");
+        check(text.includes("important inline wording"), "lost inline element text");
+        check(text.includes("word advertisement"), "removed a legitimate prose word");
+        check(text.includes("final paragraph"), "lost the final paragraph");
+        check(!text.includes("LOUD PRODUCT"), "included an advertisement block");
+        check(!text.includes("Unrelated sidebar"), "included an aside");
+        check(!text.includes("Related stories"), "included related links");
+        check(!text.includes("reader@example.com"), "included a form field");
+        check(!text.includes("Invisible tracking"), "included CSS-hidden text");
+        check(!text.includes("Outside title"), "selected outside the chosen body");
+
+        const result = CleanBodyContent.performSelection(target);
+        check(result.ok, "selection operation failed");
+        check(CleanBodyContent.currentSelectionMatches(), "native selection range changed");
+        const nativeSelectedText = getSelection().toString();
+        check(nativeSelectedText.includes("first meaningful paragraph"), "native selection lost body text");
+        check(!nativeSelectedText.includes("LOUD PRODUCT"), "native selection included an advertisement");
+        check(!nativeSelectedText.includes("Unrelated sidebar"), "native selection included an aside");
+        check(
+          document.querySelector(".advertisement").classList.contains(CleanBodySelector.EXCLUDED_CLASS),
+          "advertisement was not marked unselectable"
+        );
+
+        const clipboard = new DataTransfer();
+        const copyEvent = new ClipboardEvent("copy", {
+          bubbles: true,
+          cancelable: true,
+          clipboardData: clipboard
+        });
+        document.dispatchEvent(copyEvent);
+        const copiedText = clipboard.getData("text/plain");
+        check(copyEvent.defaultPrevented, "clean copy handler did not run");
+        check(copiedText === result.cleanText, "clipboard did not receive the cleaned text");
+        check(!copiedText.includes("LOUD PRODUCT"), "clipboard included advertisement text");
+
+        CleanBodyContent.clearActiveSelection();
+        const wtrTarget = document.getElementById("wtr-clicked-line");
+        const wtrRoot = CleanBodySelector.findContentRoot(wtrTarget);
+        check(wtrRoot && wtrRoot.id === "wtr-chapter", "WTR chapter body was not selected");
+        const wtrResult = CleanBodyContent.performSelection(wtrTarget);
+        check(wtrResult.ok, "WTR menu-target chapter was rejected");
+        check(
+          wtrResult.cleanText.includes("Tianji Mountain Range was shrouded"),
+          "WTR inline glossary button text was removed"
+        );
+        check(wtrResult.cleanText.includes("laws of Hell surrounded"), "WTR inline term spacing broke");
+        check(!wtrResult.cleanText.includes("WTR LAB INLINE ADVERTISEMENT"), "WTR ad was included");
+
+        const candidateResult = CleanChapterCapture.buildChapterCandidate(
+          document,
+          wtrTarget,
+          CleanBodySelector,
+          "https://wtr-lab.com/en/novel/95310/example-novel/chapter-1"
+        );
+        check(candidateResult.ok, "WTR chapter capture candidate was not built");
+        check(candidateResult.candidate.chapterNumber === 1, "WTR chapter number was wrong");
+        check(
+          candidateResult.candidate.cleanText === wtrResult.cleanText,
+          "automatic capture text differed from manual clean selection"
+        );
+
+        const navRow = document.createElement("div");
+        navRow.innerHTML = '<button disabled>Prev</button><div class="chapter-status"><small><span>Ch. 1 / 92</span></small><small class="percent"><span>1.1%</span></small></div><button id="next-chapter">Next</button>';
+        document.querySelector("main").prepend(navRow);
+        const url = "https://wtr-lab.com/en/novel/95310/example-novel/chapter-1";
+        const first = CleanReader.inspect(document, CleanBodySelector, 1, url);
+        check(first.status === "ready", "reader did not recognize ready chapter");
+        check(first.next.total === 92, "WTR percentage was concatenated into the chapter total");
+        check(first.next.kind === "button" && first.next.nextNumber === 2, "reader did not find actual Next button");
+        const service = document.createElement("a");
+        service.setAttribute("aria-pressed", "true"); service.textContent = "Web+";
+        document.body.append(service);
+        const withService = CleanReader.inspect(document, CleanBodySelector, 1, url);
+        check(withService.mode === "Web+", "WTR aria-pressed translation was not detected");
+        check(withService.next.fallbackUrl.endsWith("?service=webplus"), "direct-route recovery lost the selected translation");
+        service.remove();
+        navRow.querySelector(".chapter-status").textContent = "Ch. 2 / 92";
+        const second = CleanReader.inspect(document, CleanBodySelector, 2, url);
+        check(second.candidate.chapterNumber === 2, "expected chapter lost to stale active marker");
+        check(second.candidate.cleanText.includes("Chapter two becomes active"), "wrong prose for expected chapter");
+
+        const nextButton = document.getElementById("next-chapter");
+        nextButton.disabled = true;
+        check(CleanReader.inspect(document, CleanBodySelector, 2, url).next.kind === "missing",
+          "temporarily disabled Next treated as completion");
+        nextButton.disabled = false;
+        navRow.querySelector(".chapter-status").textContent = "Ch. 92 / 92";
+        const security = CleanReader.inspect(document, CleanBodySelector, 92, url);
+        check(security.status === "security", "security check was treated as chapter content");
+        document.getElementById("wtr-chapter-92").innerHTML =
+          '<p>The actual chapter replaces the challenge without changing the page URL. This paragraph contains enough genuine chapter prose to meet the minimum length and validate the same-page recovery path in a real browser.</p>';
+        nextButton.disabled = true;
+        const recovered = CleanReader.inspect(document, CleanBodySelector, 92, url);
+        check(recovered.status === "ready" && recovered.next.kind === "end", "same-page recovery or final-chapter detection failed");
+        const overlay = document.createElement("div");
+        overlay.setAttribute("role", "dialog");
+        overlay.textContent = "Security Check Required";
+        document.body.append(overlay);
+        check(CleanReader.inspect(document, CleanBodySelector, 92, url).status === "security", "external security overlay was ignored");
+        overlay.hidden = true;
+        check(CleanReader.inspect(document, CleanBodySelector, 92, url).status === "ready", "hidden security markup blocked ready prose");
+        overlay.remove();
+
+        navRow.querySelector(".chapter-status").textContent = "Ch. 2 / 92";
+        nextButton.outerHTML = '<a href="https://wtr-lab.com/en/novel/77/wrong/chapter-3">Next</a>';
+        check(CleanReader.inspect(document, CleanBodySelector, 2, url).next.kind === "missing", "wrong-novel Next link accepted");
+        navRow.querySelector("a").href = "https://wtr-lab.com/en/novel/95310/example-novel/chapter-3";
+        check(CleanReader.inspect(document, CleanBodySelector, 2, url).next.kind === "link", "valid chapter link rejected");
+
+        document.documentElement.dataset.testStatus = failures.length ? "failed" : "passed";
+        const output = document.createElement("pre");
+        output.id = "test-results";
+        output.textContent = failures.length ? failures.join("\n") : "All browser fixture checks passed.";
+        document.body.appendChild(output);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><title>Chapter collection</title>
+  <style>
+    :root { color-scheme:light dark; }
+    body { width:340px; margin:0; padding:20px; font:14px/1.5 system-ui; }
+    h1 { font-size:19px; margin:0 0 12px; } p { margin:8px 0; }
+    #status { font-weight:650; } #error { color:#e36c50; }
+    button,select { font:inherit; padding:7px 10px; border:1px solid #7778; border-radius:7px; margin:4px 2px 4px 0; }
+    button { cursor:pointer; } button:disabled { opacity:.45; cursor:default; }
+    #archives { width:100%; } .muted { font-size:12px; opacity:.75; }
+    section { border-top:1px solid #7775; margin-top:14px; padding-top:12px; }
+  </style>
+</head>
+<body>
+  <h1>Chapter collection</h1>
+  <p id="novel">No active collection</p>
+  <p id="status" role="status"></p><p id="progress"></p>
+  <button id="start">Start on this tab</button>
+  <button id="pause" disabled>Pause</button><button id="resume" disabled>Resume</button>
+  <button id="stop" disabled>Stop</button><button id="open" disabled>Open collection tab</button>
+  <p id="error" role="alert"></p>
+  <section>
+    <label for="archives">Saved chapter backups</label>
+    <select id="archives"><option value="">No backups yet</option></select>
+    <button id="export" disabled>Download PDF</button><button id="export-txt" disabled>Download TXT</button>
+    <button id="export-log" disabled>Download timing log</button>
+    <p class="muted">Finish or Stop automatically saves a novel-named, text-based PDF to Downloads. Pause does not export. You can export any backup again as PDF or TXT.</p>
+    <p class="muted">Timing history records each chapter, configured/actual waits, security pauses and navigation. Download its JSON log for debugging; no chapter text is included.</p>
+  </section>
+  <p class="muted">CopyAPP still receives clipboard copies. Other things you copy may mix into its history. Keep the collection tab open.</p>
+  <button id="settings">Settings</button>
+  <script src="popup.js"></script>
+</body>
+</html>

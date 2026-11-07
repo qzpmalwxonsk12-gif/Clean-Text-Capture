@@ -1,0 +1,4 @@
+node_modules/
+.pdf-test-venv/
+tmp/
+output/

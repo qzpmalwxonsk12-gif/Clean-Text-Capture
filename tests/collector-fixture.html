@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Collector integration fixture</title></head>
+<body>
+  <div><button disabled>Prev</button><div class="chapter-status">Ch. 1 / 3</div><button id="next">Next</button></div>
+  <button aria-checked="true">AI</button>
+  <div class="chapter-tracker active"><div class="chapter-container" id="chapter-1"><div class="chapter-body"></div></div></div>
+  <script src="../selector-core.js"></script><script src="../capture-core.js"></script><script src="../reader-core.js"></script>
+  <script src="../archive.js"></script><script src="../export-core.js"></script><script src="../settings-core.js"></script><script src="collector-fixture.js"></script>
+  <script src="../vendor/pdf-lib.min.js"></script><script src="../vendor/fontkit.umd.min.js"></script><script src="../pdf-export.js"></script>
+  <script src="../background.js"></script>
+  <script>fixture.installContentChannel();</script>
+  <script src="../content.js"></script><script src="../collector.js"></script>
+  <script>fixture.run();</script>
+</body></html>
